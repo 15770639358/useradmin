@@ -1,14 +1,16 @@
 <template>
  <div>
    <el-table
-     border
      :data="roles"
-     stripe
-     style="width: 100%">
+     style="width: 100%"
+     row-key="id"
+     border
+     lazy
+     :load="load"
+     :tree-props="{children: 'child'}">
      <el-table-column
-       sortable
        prop="id"
-       label="Id"
+       label="id"
        width="180">
      </el-table-column>
      <el-table-column
@@ -41,7 +43,7 @@
 </template>
 
 <script>
-import {getAllRoles, getAuthByRoleId} from '../../api/role'
+import {getAllRoles, getAuthByRoleId, getAllRoleByList} from '../../api/role'
 export default {
   name: "pageRole",
   data() {
@@ -51,7 +53,7 @@ export default {
       auths:[],
       defaultProps: {
         children: 'child',
-        label: 'name'
+        label: 'authname'
       }
     }
   },
@@ -61,7 +63,7 @@ export default {
 
   methods: {
     async init() {
-      let {data} = await getAllRoles()
+      let {data} = await getAllRoleByList()
       this.roles = data
     },
 

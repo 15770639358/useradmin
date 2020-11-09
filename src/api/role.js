@@ -81,3 +81,29 @@ export function getAllAuths() {
     method: 'get'
   })
 }
+
+//查询所有角色嵌套列表形式
+export function getAllRoleByList() {
+  return request({
+    url: 'getAllRole',
+    method: 'get',
+  })
+}
+
+//添加角色
+export function addRoles(params) {
+  return request({
+    url: 'addRoles',
+    method: 'post',
+    data: params
+  })
+}
+
+//删除角色
+export function removeRoles(params) {
+  return request({
+    url: 'removeRole',
+    method: 'post',
+    data: params
+  })
+}

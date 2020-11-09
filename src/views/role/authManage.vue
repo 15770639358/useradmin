@@ -1,14 +1,16 @@
 <template>
   <div>
     <el-table
-      border
       :data="roles"
-      stripe
-      style="width: 100%">
+      style="width: 100%"
+      row-key="id"
+      border
+      lazy
+      :load="load"
+      :tree-props="{children: 'child'}">
       <el-table-column
-        sortable
         prop="id"
-        label="Id"
+        label="id"
         width="180">
       </el-table-column>
       <el-table-column
@@ -20,7 +22,7 @@
           <el-button
             size="mini"
             type="success"
-            @click="editRoleAuth(scope.row)">编辑</el-button>
+            @click="editRoleAuth(scope.row)" :disabled="scope.row.id === 1">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -49,7 +51,7 @@
 </template>
 
 <script>
-import {getAllRoles, getAuthByRoleId, getAllAuths, addAuth, removeAuth } from '../../api/role'
+import {getAllRoles, getAuthByRoleId, getAllAuths, addAuth, removeAuth, getAllRoleByList } from '../../api/role'
 export default {
   name: "pageRole",
   data() {
@@ -63,7 +65,7 @@ export default {
       parentNodes: [], //选择角色已有权限的id父节点
       defaultProps: {
         children: 'child',
-        label: 'name'
+        label: 'authname'
       }
     }
   },
@@ -73,7 +75,7 @@ export default {
 
   methods: {
     async init() {
-      let {data} = await getAllRoles()
+      let {data} = await getAllRoleByList()
       let allAuths = await getAllAuths()
       this.allAuths = allAuths.data
       this.roles = data
