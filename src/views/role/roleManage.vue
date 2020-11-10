@@ -1,5 +1,16 @@
 <template>
   <div>
+    <el-row  :gutter="20">
+      <el-col :span="5">
+        <el-input
+          placeholder="添加一级角色"
+          v-model="addFirstroles">
+        </el-input>
+      </el-col>
+      <el-col :span="2">
+        <el-button type="success"  @click="addFirstRole">添加</el-button>
+      </el-col>
+    </el-row>
     <el-table
       :data="roles"
       style="width: 100%"
@@ -51,6 +62,7 @@ export default {
     return {
       dialogFormVisible: false,
       roles: [], //所有角色信息
+      addFirstroles: '',//要添加的一级角色名
       addRolename: '', //要添加的角色名
       parentRole: '' //要添加子角色的父角色信息
     }
@@ -62,7 +74,27 @@ export default {
     async init () {
       let roles = await getAllRoleByList()
       this.roles = roles.data
-      console.log(this.roles);
+    },
+
+    //添加一级角色
+    async addFirstRole () {
+      let category = ''
+      if(this.addFirstroles.trim()){
+        let data = await addRoles({category, rolename: this.addFirstroles})
+        if(data.code === 0) {
+          this.$message({
+            type: 'success',
+            message: '添加成功'
+          })
+          this.addFirstroles = ''
+          await this.init()
+        }
+      }else {
+        this.$message({
+          type: 'error',
+          message: '请输入角色名'
+        })
+      }
     },
 
     async addRole () {
@@ -94,6 +126,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(async () => {
+        //先删除对应用户及其权限
         let data = await removeRoles({category: role.category})
         if(data.code === 0) {
           this.$message({
@@ -116,3 +149,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  .el-row{
+    padding: 10px 0 10px 10px;
+  }
+</style>

@@ -6,7 +6,6 @@
      row-key="id"
      border
      lazy
-     :load="load"
      :tree-props="{children: 'child'}">
      <el-table-column
        prop="id"

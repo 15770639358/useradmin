@@ -6,7 +6,6 @@
       row-key="id"
       border
       lazy
-      :load="load"
       :tree-props="{children: 'child'}">
       <el-table-column
         prop="id"
@@ -34,7 +33,7 @@
       width="30%">
       <el-tree
         ref="tree"
-        :data="allAuths"
+        :data="showAuths"
         show-checkbox
         node-key="id"
         :default-expanded-keys="parentNodes"
@@ -61,6 +60,7 @@ export default {
       roleAuthsId: [], //选择角色已有权限的id集合
       roles: [], // 所有角色
       allAuths: [], //所有权限信息
+      showAuths: [], //展示权限信息
       leftNodes: [], //选择角色已有权限的id叶子节点
       parentNodes: [], //选择角色已有权限的id父节点
       defaultProps: {
@@ -85,26 +85,71 @@ export default {
       this.roleAuthsId = []
       this.leftNodes = []
       this.parentNodes = []
+      this.showAuths = this.allAuths
       let id = auth.id
       this.roleId = id
       let {data} = await getAuthByRoleId({id})
+      if((auth.category+'').length !== 2){
+        let category = (auth.category+'').substring(0,(auth.category+'').length-2)
+        let roleId = this.getParentRoleId(category,this.roles)
+        let {data} = await getAuthByRoleId({id: roleId})
+        this.showAuths = data
+      }
       this.getRoleAuthsId(data)
       this.setRoleAuthsId(this.allAuths)
+      // this.init()
       this.dialogVisible = true
       setTimeout(() => {this.$refs.tree.setCheckedKeys(this.leftNodes);},30)
     },
 
+    // 遍历roles拿取父id
+    getParentRoleId(category,roles){
+      let roleId = ''
+      for (const role of roles) {
+        if((role.category+'') === category){
+          roleId = role.id
+          return role.id
+        }
+        if(role.child){
+          roleId = this.getParentRoleId(category,role.child)
+        }
+      }
+      return roleId
+    },
+    //获取父角色的所有子角色
+    // getChildRoles(parentId) {
+    //   this.roles.forEach((role) => {
+    //     if(role.id === parentId){
+    //       this.getChildRoleId(role.child)
+    //     }
+    //     if(role.child){
+    //       this.getChildRoles(role.child)
+    //     }
+    //   })
+    // },
+    //遍历roles拿取子id
+    // getChildRoleId(roles){
+    //   roles.forEach(role => {
+    //     console.log(role.id,'aaaaa')
+    //     if(role.child) {
+    //       this.getChildRoleId(role.child)
+    //     }
+    //   })
+    //
+    // },
     updateRoleAuths() {
       let updateAuth = [...this.$refs.tree.getCheckedKeys(),...this.$refs.tree.getHalfCheckedKeys()]
+      let data = ''
       this.roleAuthsId.forEach(async id => {
         if(!updateAuth.includes(id)){
-          await removeAuth({roleId: this.roleId, authId: id})
+          //删除，其所有子角色的响应权限也会删除
+          // this.getChildRoles(this.roleId)
+          data = await removeAuth({roleId: this.roleId, authId: id})
         }
       })
       updateAuth.forEach(async id => {
         if(!this.roleAuthsId.includes(id)){
-          await addAuth({roleId: this.roleId, authId: id})
-
+          data = await addAuth({roleId: this.roleId, authId: id})
         }
       })
       this.$message({

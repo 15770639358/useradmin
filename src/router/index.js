@@ -87,6 +87,16 @@ export const asyncRoutes = [
           roles: [], // or you can only set roles in sub nav
           noCache: true
         }
+      },
+      {
+        path: 'userManage',
+        component: () => import('@/views/user/userManage'),
+        name: 'userManage',
+        meta: {
+          title: '用户管理',
+          roles: [], // or you can only set roles in sub nav
+          noCache: true
+        }
       }
     ]
   },
