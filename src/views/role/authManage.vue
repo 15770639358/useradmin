@@ -33,7 +33,7 @@
       width="30%">
       <el-tree
         ref="tree"
-        :data="showAuths"
+        :data="allAuths"
         show-checkbox
         node-key="id"
         :default-expanded-keys="parentNodes"
@@ -60,7 +60,7 @@ export default {
       roleAuthsId: [], //选择角色已有权限的id集合
       roles: [], // 所有角色
       allAuths: [], //所有权限信息
-      showAuths: [], //展示权限信息
+      // showAuths: [], //展示权限信息
       leftNodes: [], //选择角色已有权限的id叶子节点
       parentNodes: [], //选择角色已有权限的id父节点
       defaultProps: {
@@ -89,12 +89,12 @@ export default {
       let id = auth.id
       this.roleId = id
       let {data} = await getAuthByRoleId({id})
-      if((auth.category+'').length !== 2){
-        let category = (auth.category+'').substring(0,(auth.category+'').length-2)
-        let roleId = this.getParentRoleId(category,this.roles)
-        let {data} = await getAuthByRoleId({id: roleId})
-        this.showAuths = data
-      }
+      // if((auth.category+'').length !== 2){
+      //   let category = (auth.category+'').substring(0,(auth.category+'').length-2)
+      //   let roleId = this.getParentRoleId(category,this.roles)
+      //   let {data} = await getAuthByRoleId({id: roleId})
+      //   this.showAuths = data
+      // }
       this.getRoleAuthsId(data)
       this.setRoleAuthsId(this.allAuths)
       // this.init()
@@ -103,19 +103,19 @@ export default {
     },
 
     // 遍历roles拿取父id
-    getParentRoleId(category,roles){
-      let roleId = ''
-      for (const role of roles) {
-        if((role.category+'') === category){
-          roleId = role.id
-          return role.id
-        }
-        if(role.child){
-          roleId = this.getParentRoleId(category,role.child)
-        }
-      }
-      return roleId
-    },
+    // getParentRoleId(category,roles){
+    //   let roleId = ''
+    //   for (const role of roles) {
+    //     if((role.category+'') === category){
+    //       roleId = role.id
+    //       return role.id
+    //     }
+    //     if(role.child){
+    //       roleId = this.getParentRoleId(category,role.child)
+    //     }
+    //   }
+    //   return roleId
+    // },
     //获取父角色的所有子角色
     // getChildRoles(parentId) {
     //   this.roles.forEach((role) => {

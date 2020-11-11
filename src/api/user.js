@@ -69,6 +69,14 @@ export function addUser(params) {
     data:params
   })
 }
+//updatePassword
+export function updatePassword(params) {
+  return request({
+    url: '/updatePassword',
+    method: 'post',
+    data:params
+  })
+}
 export function logout() {
   return 0
 }

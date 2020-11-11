@@ -51,7 +51,7 @@
           <el-button
             size="mini"
             type="warning"
-            @click="">修改密码</el-button>
+            @click="needAddUser=scope.row.id;showUpdatePass=true">修改密码</el-button>
           <el-button
             size="mini"
             type="success"
@@ -85,20 +85,33 @@
         <el-button type="primary" @click="addRoles">确 定</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="修改密码" :visible.sync="showUpdatePass">
+      <el-form ref="form" :model="from" label-width="80px">
+        <el-input v-model="from.updatePassword" placeholder="请输入密码" show-password></el-input>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="needAddUser='';from.updatePassword='';showUpdatePass=false">取 消</el-button>
+        <el-button type="primary" @click="updatePass">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import {getAllUser, removeUserRole,getUserRole, addUserRole, getCountUser, addUser} from '../../api/user'
+import {getAllUser, removeUserRole,getUserRole, addUserRole, getCountUser, addUser, updatePassword} from '../../api/user'
 import {getAllRoleByList} from '../../api/role'
+import md5 from  'js-md5'
 export default {
   name: 'userManage',
   data() {
     return {
+      showUpdatePass:false,
       username: '',//新添加的用户名
       showRoles: [], //展示的权限信息 连级
       from: {
         addRole: '', //选中角色的id'
+        updatePassword: '' //修改密码
       },
       userInfo: [], // 所有用户信息
       allRoles: [], //所有角色信息
@@ -216,6 +229,33 @@ export default {
           await this.init()
         }
       }
+    },
+    //修改密码
+    async updatePass() {
+      let pass = this.from.updatePassword
+      let userId = this.needAddUser
+      console.log(pass);
+      console.log(userId);
+      //updatePassword
+      if(pass.trim().length <6){
+        this.$message({
+          type: 'error',
+          message: '修改失败!密码长度不可少于6位'
+        })
+        return
+      }else {
+        let {code} = await updatePassword({userId: userId,password: md5(pass)})
+        console.log(code);
+        if(code === 0){
+          this.$message({
+            type: 'success',
+            message: '修改成功'
+          })
+        }
+      }
+      this.needAddUser = ''
+      this.from.updatePassword = ''
+      this.showUpdatePass = false
     }
   }
 }
