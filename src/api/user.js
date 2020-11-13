@@ -77,6 +77,14 @@ export function updatePassword(params) {
     data:params
   })
 }
+//removeUserAndRole
+export function removeUserAndRole(params) {
+  return request({
+    url: '/removeUserAndRole',
+    method: 'post',
+    data:params
+  })
+}
 export function logout() {
   return 0
 }

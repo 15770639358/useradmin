@@ -59,7 +59,8 @@
           <el-button
             size="mini"
             type="danger"
-            @click="deleteRole(scope.row,props.row.id)">删除用户</el-button>
+            :disabled="scope.row.id === 1"
+            @click="deleteUser(scope.row)">删除用户</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -99,7 +100,7 @@
 </template>
 
 <script>
-import {getAllUser, removeUserRole,getUserRole, addUserRole, getCountUser, addUser, updatePassword} from '../../api/user'
+import {getAllUser, removeUserRole,getUserRole, addUserRole, getCountUser, addUser, updatePassword, removeUserAndRole} from '../../api/user'
 import {getAllRoleByList} from '../../api/role'
 import md5 from  'js-md5'
 export default {
@@ -132,6 +133,12 @@ export default {
     },
     //添加角色
     async addUserRole(user) {
+      // this.$notify.success({
+      //   duration: 0,
+      //   title: 'Info',
+      //   message: '这是一条没有关闭按钮的消息',
+      //   showClose: false
+      // });
       this.needAddUser = user.id
       // this.copyAllRoles()
       this.showRoles = []
@@ -245,7 +252,6 @@ export default {
         return
       }else {
         let {code} = await updatePassword({userId: userId,password: md5(pass)})
-        console.log(code);
         if(code === 0){
           this.$message({
             type: 'success',
@@ -256,6 +262,22 @@ export default {
       this.needAddUser = ''
       this.from.updatePassword = ''
       this.showUpdatePass = false
+    },
+    //删除用户
+    async deleteUser(user) {
+      let {code} = await removeUserAndRole({userId: user.id})
+      if(code === 0){
+        this.$message({
+          type: 'success',
+          message: '删除成功'
+        })
+        await this.init()
+      }else {
+        this.$message({
+          type: 'error',
+          message: '删除失败'
+        })
+      }
     }
   }
 }
