@@ -16,13 +16,13 @@ export function addRole(params) {
   })
 }
 
-export function removeRole(params) {
-  return request({
-    url: '/removeUserRole',
-    method: 'get',
-    params
-  })
-}
+// export function removeRole(params) {
+//   return request({
+//     url: '/removeUserRole',
+//     method: 'get',
+//     params
+//   })
+// }
 
 export function getAllAuth() {
   return request({

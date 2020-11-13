@@ -29,6 +29,7 @@
               <el-table-column label="操作">
                 <template slot-scope="scope">
                   <el-button
+                    v-if="scope.row.id"
                     size="mini"
                     type="danger"
                     @click="deleteRole(scope.row,props.row.id)">删除</el-button>
